@@ -11,8 +11,3 @@ body {
   font-family: 'Inter', sans-serif; /* Asegúrate de tener Inter o usa sans-serif */
   -webkit-font-smoothing: antialiased;
 }
-
-/* Forzamos bordes rectos en todo el proyecto */
-* {
-  border-radius: 0 !important;
-}

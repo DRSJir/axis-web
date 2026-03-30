@@ -1,11 +1,16 @@
+"use client";
+
+import { useCart } from "@/context/CartContext";
 import { ShoppingBagIcon } from "./icons";
 
-export default function Header({ category = "all tools" }: { category?: string }) {
+export default function Header({ category = "all tools" }) {
+    const { totalItems } = useCart(); // Leemos el total real
+
     return (
         <header className="px-6 py-4 flex items-center justify-between sticky top-0 bg-white/90 backdrop-blur-sm z-10 border-b border-gray-50">
             <div className="relative cursor-pointer group">
-                {/* Usamos el nuevo componente de icono */}
-                <ShoppingBagIcon count={0} className="w-8 h-10 text-black" />
+                {/* El icono ahora muestra el conteo real */}
+                <ShoppingBagIcon count={totalItems} className="w-8 h-10 text-black" />
             </div>
 
             <div className="flex flex-col items-center justify-center">
