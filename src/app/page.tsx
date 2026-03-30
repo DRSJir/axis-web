@@ -1,12 +1,19 @@
 import Header from "@/components/Header";
 import ProductCard from "@/components/ProductCard";
+import { fetchAxis } from "@/lib/api";
 import { Product } from "@/types";
 
 export default async function Home() {
-    const response = await fetch("https://axis-api-5rer.onrender.com/api/products", { cache: 'no-store' });
-    const data = await response.json();
-    const products: Product[] = data.items;
+    let products: Product[] = [];
+    let error = false;
 
+    try {
+        const data = await fetchAxis("/products", { cache: 'no-store' });
+        products = data.items;
+    } catch (e) {
+        console.error("AXIS_SYSTEM_CRITICAL_ERROR:", e);
+        error = true;
+    }
     return (
         <div className="min-h-screen flex flex-col bg-white">
             <Header category="engineering tools" />
