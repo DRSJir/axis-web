@@ -9,7 +9,8 @@ export default function ProductCard({ product }: { product: Product }) {
 
     return (
         <article className="flex flex-col group mb-8">
-            <div className="bg-[#F8F8F8] aspect-[4/5] relative mb-3 flex items-center justify-center border-b border-transparent group-hover:border-black transition-all">
+            {/* Contenedor de imagen */}
+            <div className="bg-[#F8F8F8] aspect-square relative mb-3 flex items-center justify-center border-b border-transparent group-hover:border-black transition-all justify-center rounded-2xl overflow-hidden">
                 <div className="text-[10px] font-mono text-gray-300 uppercase tracking-[0.3em]">
                     {product.sku}
                 </div>
