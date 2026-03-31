@@ -1,13 +1,27 @@
+/* src/app/globals.css */
 @import "tailwindcss";
 
 :root {
+  /* Base: 2.6vw */
+  --font-size-base: 2.6vw;
+  /* Incremento del 1.2% (1.012) */
+  --font-size-md: calc(var(--font-size-base) * 1.012);
+  /* Títulos o elementos destacados */
+  --font-size-lg: calc(var(--font-size-md) * 1.012);
+
   --background: #FFFFFF;
   --foreground: #1A1A1A;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: 'Inter', sans-serif; /* Asegúrate de tener Inter o usa sans-serif */
-  -webkit-font-smoothing: antialiased;
+@layer base {
+  body {
+    @apply antialiased text-black;
+    /* Aplicamos la base al cuerpo */
+    font-size: var(--font-size-base);
+  }
 }
+
+/* Clases utilitarias para WebStorm */
+.text-axis-base { font-size: var(--font-size-base); }
+.text-axis-md { font-size: var(--font-size-md); }
+.text-axis-lg { font-size: var(--font-size-lg); }
