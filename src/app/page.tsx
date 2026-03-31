@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import ProductCard from "@/components/ProductCard";
+import Footer from "@/components/Footer";
 import { fetchAxis } from "@/lib/api";
 import { Product } from "@/types";
 
@@ -14,23 +15,56 @@ export default async function Home() {
         console.error("AXIS_SYSTEM_CRITICAL_ERROR:", e);
         error = true;
     }
+
     return (
         <div className="min-h-screen flex flex-col bg-white">
+            {/* Header con espaciado interno proporcional */}
             <Header category="engineering tools" />
 
-            <main className="flex-grow px-6 py-10 max-w-2xl mx-auto w-full">
-                <div className="space-y-12">
-                    {products.map((product) => (
-                        <ProductCard key={product.id} product={product} />
-                    ))}
-                </div>
+            {/* CONTENEDOR PRINCIPAL:
+                - max-w-[1600px] para que no se desparrame en monitores ultra-wide.
+                - px-[6vw] asegura que el margen lateral escale con el zoom del navegador.
+            */}
+            <main className="max-w-[1600px] mx-auto px-[6vw] pb-[10vw] w-full flex-grow">
+                {error ? (
+                    /* Error System UI */
+                    <div className="mt-[10vw] border border-red-100 bg-red-50/30 p-[5vw] text-center rounded-[4vw] min-[415px]:rounded-none">
+                        <p className="font-mono text-[1.5vw] min-[415px]:text-[0.7vw] uppercase tracking-[0.4em] text-red-500 mb-[1vw]">
+                            [system_connection_failed]
+                        </p>
+                        <p className="text-axis-base font-light text-red-900/60 lowercase">
+                            error al sincronizar con la api de render.
+                        </p>
+                    </div>
+                ) : (
+                    /* GRID SISTÉMICO:
+                       - gap-x: Separación horizontal (4vw móvil / 2vw escritorio).
+                       - gap-y: Separación vertical (12vw móvil para dar aire / 6vw escritorio).
+                    */
+                    <div className="grid grid-cols-1 min-[415px]:grid-cols-2 lg:grid-cols-4
+                                    gap-x-[4vw] min-[415px]:gap-x-[2.5vw]
+                                    gap-y-[12vw] min-[415px]:gap-y-[6vw]
+                                    mt-[8vw] min-[415px]:mt-[5vw]">
+
+                        {products.map((product, index) => (
+                            <ProductCard
+                                key={product.id}
+                                product={product}
+                                /**
+                                 * Lógica de Destacados:
+                                 * Los primeros 2 productos ocupan 2 columnas en Desktop.
+                                 * En móvil (<414px) todos vuelven a ser de 1 columna automáticamente
+                                 * gracias a la lógica que pusimos en el ProductCard.
+                                 */
+                                isFeatured={index < 2}
+                            />
+                        ))}
+                    </div>
+                )}
             </main>
 
-            <footer className="p-10 border-t border-gray-100 mt-20">
-                <p className="text-[10px] font-mono text-center text-gray-400 uppercase tracking-[0.3em]">
-                    Axis Precision Systems © 2026
-                </p>
-            </footer>
+            {/* Footer que hereda la estética oscura y el escalado */}
+            <Footer />
         </div>
     );
 }
