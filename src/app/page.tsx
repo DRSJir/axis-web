@@ -24,7 +24,7 @@ export default async function Home() {
 
             <main className="max-w-[1600px] mx-auto px-6 pb-24 w-full">
                 {/* - Default (Móvil < 414px): 1 columna - min-[415px] (Tablet/Desktop): 2 o 4 columnas */}
-                <div className="grid grid-cols-1 min-[415px]:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-16 mt-8">
+                <div className="grid grid-cols-1 min-[415px]:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-5 mt-8">
                     {products.map((product, index) => (
                         <ProductCard
                             key={product.id}

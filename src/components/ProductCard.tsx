@@ -27,17 +27,26 @@ export default function ProductCard({ product, isFeatured = false }: Props) {
                 `}>
             </div>
 
-            <div className="flex justify-between items-start mt-6 px-1">
-                <div className="flex flex-col leading-tight text-black font-light lowercase">
+            <div className="flex justify-between items-center mt-2 px-1">
+                <div className="flex flex-col leading-tight text-black font-light">
 
-                    {/* Aplicamos las nuevas fuentes proporcionales */}
-                    <h2 className="text-axis-base">{product.name}</h2>
+                    {/* Usar fuentes proporcionales */}
+                    <p className="text-axis-base">{product.name}</p>
                     <span className="text-black text-axis-base mt-1">
-                        {product.price} USD
+                        {product.price * 20} MXN
                     </span>
                 </div>
+
                 <button onClick={() => addToCart(product)}
-                        className="text-[1.5rem] font-extralight hover:opacity-40 p-2 transition-opacity active:scale-90" aria-label="Add to cart">+</button>
+                        className="
+                            flex items-center justify-center
+                            text-[8vw] min-[415px]:text-[3vw]
+                            font-extralight leading-none
+                            hover:opacity-40 transition-all
+                            active:scale-90 p-2 aspect-square"
+                        aria-label="Add to cart">
+                    <span className="translate-y-[-5%]">+</span >
+                </button>
             </div>
         </article>
     );

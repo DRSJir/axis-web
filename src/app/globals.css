@@ -3,7 +3,7 @@
 
 :root {
   /* Base: 2.6vw */
-  --font-size-base: 2.6vw;
+  --font-size-base: 4vw;
   /* Incremento del 1.2% (1.012) */
   --font-size-md: calc(var(--font-size-base) * 1.012);
   /* Títulos o elementos destacados */
