@@ -35,3 +35,20 @@ export const PlusIcon = ({ className = "" }: { className?: string }) => (
         />
     </svg>
 );
+
+export function MenuIcon({ className = "w-6 h-6" }: { className?: string }) {
+    return (
+        <svg
+            viewBox="0 0 30 150" // Ajustamos el viewbox para que no se corte el radio
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className={className}
+        >
+            <g fill="currentColor">
+                <circle cx="15" cy="20" r="15" />
+                <circle cx="15" cy="75" r="15" />
+                <circle cx="15" cy="130" r="15" />
+            </g>
+        </svg>
+    );
+}

@@ -9,7 +9,6 @@ export default async function Home() {
     let error = false;
 
     try {
-        // Fetch desde tu API de Render usando el cliente seguro que creamos
         const data = await fetchAxis("/products", { cache: 'no-store' });
         products = data.items;
     } catch (e) {
@@ -19,23 +18,52 @@ export default async function Home() {
 
     return (
         <div className="min-h-screen flex flex-col bg-white">
-            {/* Header con categoría dinámica */}
+            {/* Header con espaciado interno proporcional */}
             <Header category="engineering tools" />
 
-            <main className="max-w-[1600px] mx-auto px-6 pb-24 w-full">
-                {/* - Default (Móvil < 414px): 1 columna - min-[415px] (Tablet/Desktop): 2 o 4 columnas */}
-                <div className="grid grid-cols-1 min-[415px]:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-5 mt-8">
-                    {products.map((product, index) => (
-                        <ProductCard
-                            key={product.id}
-                            product={product}
-                            isFeatured={index < 2}
-                        />
-                    ))}
-                </div>
+            {/* CONTENEDOR PRINCIPAL:
+                - max-w-[1600px] para que no se desparrame en monitores ultra-wide.
+                - px-[6vw] asegura que el margen lateral escale con el zoom del navegador.
+            */}
+            <main className="max-w-[1600px] mx-auto px-[6vw] pb-[10vw] w-full flex-grow">
+                {error ? (
+                    /* Error System UI */
+                    <div className="mt-[10vw] border border-red-100 bg-red-50/30 p-[5vw] text-center rounded-[4vw] min-[415px]:rounded-none">
+                        <p className="font-mono text-[1.5vw] min-[415px]:text-[0.7vw] uppercase tracking-[0.4em] text-red-500 mb-[1vw]">
+                            [system_connection_failed]
+                        </p>
+                        <p className="text-axis-base font-light text-red-900/60 lowercase">
+                            error al sincronizar con la api de render.
+                        </p>
+                    </div>
+                ) : (
+                    /* GRID SISTÉMICO:
+                       - gap-x: Separación horizontal (4vw móvil / 2vw escritorio).
+                       - gap-y: Separación vertical (12vw móvil para dar aire / 6vw escritorio).
+                    */
+                    <div className="grid grid-cols-1 min-[415px]:grid-cols-2 lg:grid-cols-4
+                                    gap-x-[4vw] min-[415px]:gap-x-[2.5vw]
+                                    gap-y-[12vw] min-[415px]:gap-y-[6vw]
+                                    mt-[8vw] min-[415px]:mt-[5vw]">
+
+                        {products.map((product, index) => (
+                            <ProductCard
+                                key={product.id}
+                                product={product}
+                                /**
+                                 * Lógica de Destacados:
+                                 * Los primeros 2 productos ocupan 2 columnas en Desktop.
+                                 * En móvil (<414px) todos vuelven a ser de 1 columna automáticamente
+                                 * gracias a la lógica que pusimos en el ProductCard.
+                                 */
+                                isFeatured={index < 2}
+                            />
+                        ))}
+                    </div>
+                )}
             </main>
 
-            {/* Footer con estética oscura de Teenage Engineering */}
+            {/* Footer que hereda la estética oscura y el escalado */}
             <Footer />
         </div>
     );
