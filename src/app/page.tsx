@@ -1,4 +1,5 @@
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import { fetchAxis } from "@/lib/api";
 import { Product } from "@/types";
@@ -26,11 +27,7 @@ export default async function Home() {
                 </div>
             </main>
 
-            <footer className="p-10 border-t border-gray-100 mt-20">
-                <p className="text-[10px] font-mono text-center text-gray-400 uppercase tracking-[0.3em]">
-                    Axis Precision Systems © 2026
-                </p>
-            </footer>
+            <Footer />
         </div>
     );
 }
