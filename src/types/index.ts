@@ -6,6 +6,7 @@ export interface Product {
     stock: number;
     sku: number;
     compatibility: string[];
+    featured?: boolean;
 }
 
 export interface CartCalculation {
