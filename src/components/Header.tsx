@@ -14,7 +14,7 @@ export default function Header({ category = "all tools" }) {
             </div>
 
             <div className="flex flex-col items-center justify-center">
-                <button className="text-[10px] uppercase tracking-[0.2em] text-gray-400 hover:text-black transition-colors">
+                <button className="text-[2.7vw] uppercase tracking-[0.2em] text-gray-400 hover:text-black transition-colors">
                     shop
                 </button>
                 <h1 className="text-xl font-extralight tracking-widest mt-1 lowercase leading-none">

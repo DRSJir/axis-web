@@ -16,20 +16,20 @@ export default function Footer() {
 
                 {/* Shipping Info */}
                 <div className="text-center mb-10">
-                    <p className="text-[22px] leading-tight font-extralight text-[#b3b3b3] lowercase tracking-tight">
+                    <p className="text-[5.3vw] leading-tight font-extralight text-[#b3b3b3] lowercase tracking-tight">
                         envío gratis sobre $120*
                     </p>
-                    <p className="text-[22px] leading-tight font-extralight mb-2 text-[#b3b3b3] lowercase tracking-tight">
+                    <p className="text-[5.3vw] leading-tight font-extralight mb-2 text-[#b3b3b3] lowercase tracking-tight">
                         14 días de devolución
                     </p>
-                    <p className="text-[11px] text-[#b3b3b3] font-mono lowercase">
+                    <p className="text-[2.6vw] text-[#b3b3b3] font-mono lowercase">
                         *excluye estaciones de soldadura pesadas. leer <a className="underline hover:text-white" href="#">términos</a>.
                     </p>
                 </div>
 
                 {/* Newsletter Button */}
                 <div className="mb-12">
-                    <button className="w-full bg-[#e0e0e0] text-black text-[22px] h-[55px] rounded-[10px] hover:bg-white transition-colors font-normal lowercase">
+                    <button className="w-full bg-[#e0e0e0] text-black text-[5.3vw] h-[13vw] rounded-[2.4vw] hover:bg-white transition-colors font-normal lowercase">
                         unirse al boletín
                     </button>
                 </div>
@@ -41,7 +41,7 @@ export default function Footer() {
                             <li key={link.name} className="border-b border-[#333]">
                                 <Link
                                     href={link.href}
-                                    className="flex justify-between items-center py-2.5 text-[16px] font-light text-[#b3b3b3] hover:text-white transition-all group"
+                                    className="flex justify-between items-center py-2.5 text-[3.8vw] font-light text-[#b3b3b3] hover:text-white group"
                                 >
                                     <span className="lowercase tracking-wide">{link.name}</span>
                                     <svg className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
@@ -63,7 +63,7 @@ export default function Footer() {
                 </div>
 
                 {/* Bottom Info */}
-                <div className="flex flex-col gap-8 text-[11px] text-[#b3b3b3] font-light leading-relaxed border-[#1a1a1a] pt-8">
+                <div className="flex flex-col gap-8 text-[2.6vw] text-[#b3b3b3] font-light leading-relaxed border-[#1a1a1a] pt-8">
                     <div className="flex justify-between w-full uppercase tracking-widest font-mono">
                         <div>
                             <p>copyright ©</p>
@@ -76,7 +76,7 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    <p className="text-[#b3b3b3] text-[10px] leading-normal text-center">
+                    <p className="text-[#b3b3b3] text-[2.6vw] leading-normal text-center">
                         axis es un laboratorio dedicado al empoderamiento del derecho a reparar. nuestra misión es proveer herramientas de alta precisión con ingeniería avanzada para prolongar la vida útil de la tecnología.
                     </p>
                 </div>
