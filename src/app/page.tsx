@@ -25,7 +25,7 @@ export default async function Home() {
                 - max-w-[1600px] para que no se desparrame en monitores ultra-wide.
                 - px-[6vw] asegura que el margen lateral escale con el zoom del navegador.
             */}
-            <main className="max-w-[2560px] mx-auto px-[6vw] min-[415px]:px-[4vw] pb-[10vw] w-full flex-grow">
+            <main className="max-w-[2560px] mx-auto px-[6vw] min-[415px]:px-[6vw] pb-[10vw] w-full flex-grow">
                 {error ? (
                     /* Error System UI */
                     <div className="mt-[10vw] border border-red-100 bg-red-50/30 p-[5vw] text-center rounded-[4vw] min-[415px]:rounded-none">
@@ -43,19 +43,22 @@ export default async function Home() {
                     */
                     <div className="grid grid-cols-1 min-[415px]:grid-cols-2 lg:grid-cols-4
                                     grid-flow-row-dense
+                                    auto-rows-[1fr]
                                     gap-x-[4vw] min-[415px]:gap-x-[1vw]
                                     gap-y-[6vw] min-[415px]:gap-y-[1.5vw]
-                                    mt-[8vw] min-[415px]:mt-[5vw]">
+                                    mt-[8vw] min-[415px]:mt-[5vw]
+                                    items-start">
 
                         {products.map((product, index) => {
                             // Si es múltiplo de 8 o 10, la tarjeta se expande a 2 columnas.
-                            const isFeatured = !((index + 1) % 8 === 0 || (index + 1) % 10 === 0);
+                            const isFeatured = (index % 6 === 2) || (index % 6 === 5);
 
                             return (
                                 <ProductCard
                                     key={product.id}
                                     product={product}
                                     isFeatured={isFeatured}
+                                    index={index}
                                 />
                             );
                         })}
