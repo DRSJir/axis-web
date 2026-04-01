@@ -9,7 +9,7 @@ export default async function Home() {
     let error = false;
 
     try {
-        const data = await fetchAxis("/products", { cache: 'no-store' });
+        const data = await fetchAxis("/products?page=1&per_page=20", { cache: 'no-store' });
         products = data.items;
     } catch (e) {
         console.error("AXIS_SYSTEM_CRITICAL_ERROR:", e);
@@ -25,7 +25,7 @@ export default async function Home() {
                 - max-w-[1600px] para que no se desparrame en monitores ultra-wide.
                 - px-[6vw] asegura que el margen lateral escale con el zoom del navegador.
             */}
-            <main className="max-w-[1600px] mx-auto px-[6vw] pb-[10vw] w-full flex-grow">
+            <main className="max-w-[2560px] mx-auto px-[6vw] min-[415px]:px-[6vw] pb-[10vw] w-full flex-grow">
                 {error ? (
                     /* Error System UI */
                     <div className="mt-[10vw] border border-red-100 bg-red-50/30 p-[5vw] text-center rounded-[4vw] min-[415px]:rounded-none">
@@ -42,23 +42,26 @@ export default async function Home() {
                        - gap-y: Separación vertical (12vw móvil para dar aire / 6vw escritorio).
                     */
                     <div className="grid grid-cols-1 min-[415px]:grid-cols-2 lg:grid-cols-4
-                                    gap-x-[4vw] min-[415px]:gap-x-[2.5vw]
-                                    gap-y-[12vw] min-[415px]:gap-y-[6vw]
-                                    mt-[8vw] min-[415px]:mt-[5vw]">
+                                    grid-flow-row-dense
+                                    auto-rows-[1fr]
+                                    gap-x-[4vw] min-[415px]:gap-x-[1vw]
+                                    gap-y-[6vw] min-[415px]:gap-y-[1.5vw]
+                                    mt-[8vw] min-[415px]:mt-[5vw]
+                                    items-start">
 
-                        {products.map((product, index) => (
-                            <ProductCard
-                                key={product.id}
-                                product={product}
-                                /**
-                                 * Lógica de Destacados:
-                                 * Los primeros 2 productos ocupan 2 columnas en Desktop.
-                                 * En móvil (<414px) todos vuelven a ser de 1 columna automáticamente
-                                 * gracias a la lógica que pusimos en el ProductCard.
-                                 */
-                                isFeatured={index < 2}
-                            />
-                        ))}
+                        {products.map((product, index) => {
+                            // Si es múltiplo de 8 o 10, la tarjeta se expande a 2 columnas.
+                            const isFeatured = (index % 6 === 2) || (index % 6 === 5);
+
+                            return (
+                                <ProductCard
+                                    key={product.id}
+                                    product={product}
+                                    isFeatured={isFeatured}
+                                    index={index}
+                                />
+                            );
+                        })}
                     </div>
                 )}
             </main>

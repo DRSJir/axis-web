@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import {AxisLogo} from "@/components/icons";
 
 export default function Footer() {
     const navLinks = [
@@ -61,12 +62,8 @@ export default function Footer() {
                 </nav>
 
                 {/* Logo Axis - Escalado proporcional */}
-                <div className="flex justify-center min-[415px]:justify-start mb-[8vw] min-[415px]:mb-[4vw] opacity-80">
-                    <svg className="w-[20vw] h-[10vw] min-[415px]:w-[8vw] min-[415px]:h-[4vw]" viewBox="0 0 90 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M23.3 0H33.5L16.2 50H6L23.3 0Z" fill="white"></path>
-                        <path d="M39.6 30.5L34 16.5H45L48 24L39.6 30.5Z" fill="white"></path>
-                        <path d="M68 50C79 50 88 41 88 30C88 19 79 10 68 10C57 10 48 19 48 30C48 41 57 50 68 50Z" stroke="white" strokeWidth="8"></path>
-                    </svg>
+                <div className="flex justify-center min-[415px]:justify-start mb-[4vw] min-[415px]:mb-[2vw] opacity-80">
+                    <AxisLogo className="w-[30vw] min-[415px]:w-[12vw] text-white opacity-90" />
                 </div>
 
                 {/* Bottom Info - Grid de 2 columnas en escritorio */}
