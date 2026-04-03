@@ -25,7 +25,7 @@ export default function HeaderMobile({ totalItems }) {
         <>
             <header className={`
                 px-[6vw] py-[4vw] min-[415px]:py-[2vw]
-                flex items-center justify-between
+                flex items-center justify-between 
                 sticky top-0 z-50 bg-white/80 backdrop-blur-md
                 transition-all duration-400 ease-in-out
                 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 pointer-events-none"}
