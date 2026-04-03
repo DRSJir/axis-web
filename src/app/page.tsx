@@ -1,6 +1,6 @@
 import Header from "@/components/header/Header";
 import ProductCard from "@/components/ProductCard";
-import Footer from "@/components/Footer";
+import Footer from "@/components/footer/Footer";
 import { fetchAxis } from "@/lib/api";
 import { Product } from "@/types";
 
