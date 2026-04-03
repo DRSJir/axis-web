@@ -1,6 +1,6 @@
-import Header from "@/components/Header";
+import Header from "@/components/header/Header";
 import ProductCard from "@/components/ProductCard";
-import Footer from "@/components/Footer";
+import Footer from "@/components/footer/Footer";
 import { fetchAxis } from "@/lib/api";
 import { Product } from "@/types";
 
@@ -19,13 +19,13 @@ export default async function Home() {
     return (
         <div className="min-h-screen flex flex-col bg-white">
             {/* Header con espaciado interno proporcional */}
-            <Header category="engineering tools" />
+            <Header/>
 
             {/* CONTENEDOR PRINCIPAL:
                 - max-w-[1600px] para que no se desparrame en monitores ultra-wide.
                 - px-[6vw] asegura que el margen lateral escale con el zoom del navegador.
             */}
-            <main className="max-w-[2560px] mx-auto px-[6vw] min-[415px]:px-[6vw] pb-[10vw] w-full flex-grow">
+            <main className="max-w-640 mx-auto px-[6vw] min-[415px]:px-[6vw] pb-[2vw] w-full grow">
                 {error ? (
                     /* Error System UI */
                     <div className="mt-[10vw] border border-red-100 bg-red-50/30 p-[5vw] text-center rounded-[4vw] min-[415px]:rounded-none">
