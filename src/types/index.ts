@@ -3,6 +3,8 @@ export interface Product {
     name: string;
     category: string;
     price: number;
+    description: string | null;
+    material?: string | null;
     stock: number;
     sku: number;
     compatibility: string[];
