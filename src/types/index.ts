@@ -1,4 +1,6 @@
 export interface Product {
+    // Este es un arreglo de direcciones a las imagenes
+    images: string[];
     id: number;
     name: string;
     category: string;
