@@ -2,7 +2,10 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL;
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
 export async function fetchAxis(endpoint: string, options: RequestInit = {}) {
-    const url = `${API_BASE}${endpoint}`;
+    const cleanEndpoint = endpoint.replace(/^\/?api/, "");
+    const safeEndpoint = cleanEndpoint.startsWith('/') ? cleanEndpoint : `/${cleanEndpoint}`;
+
+    const url = `${API_BASE}${safeEndpoint}`;
 
     const defaultHeaders = {
         'Content-Type': 'application/json',
@@ -18,7 +21,7 @@ export async function fetchAxis(endpoint: string, options: RequestInit = {}) {
     });
 
     if (!response.ok) {
-        throw new Error(`AXIS_API_ERROR: ${response.statusText}`);
+        throw new Error(`AXIS_API_ERROR: ${response.status} en ${url}`);
     }
 
     return response.json();

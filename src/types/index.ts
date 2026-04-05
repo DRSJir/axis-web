@@ -1,8 +1,12 @@
 export interface Product {
+    // Este es un arreglo de direcciones a las imagenes
+    images: string[];
     id: number;
     name: string;
     category: string;
     price: number;
+    description: string | null;
+    material?: string | null;
     stock: number;
     sku: number;
     compatibility: string[];
