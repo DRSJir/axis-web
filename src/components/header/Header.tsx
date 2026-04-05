@@ -9,7 +9,7 @@ export default function Header() {
 
     return (
         <>
-            <div className="block md:hidden">
+            <div className="block md:hidden sticky top-0 z-50">
                 <HeaderMobile totalItems={totalItems} />
             </div>
 

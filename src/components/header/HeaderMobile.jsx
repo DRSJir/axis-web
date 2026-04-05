@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ShoppingBagIcon, MenuIcon } from "../icons";
+import { ShoppingBagIcon, MenuIcon } from "@/components/icons";
 import MobileMenu from "./MobileMenu";
 
 export default function HeaderMobile({ totalItems }) {
@@ -26,7 +26,6 @@ export default function HeaderMobile({ totalItems }) {
             <header className={`
                 px-[6vw] py-[4vw] min-[415px]:py-[2vw]
                 flex items-center justify-between 
-                sticky top-0 z-50
                 transition-all duration-400 ease-in-out
                 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 pointer-events-none"}
             `}>
