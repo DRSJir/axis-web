@@ -1,8 +1,8 @@
-// ProductMobile.tsx
 "use client";
 
 import { useState } from "react";
 import Image from "next/image";
+import { useCart } from "@/context/CartContext";
 import { Product } from "@/types";
 import { ImageNotAvailable } from "@/components/icons";
 
@@ -17,6 +17,14 @@ interface ProductMobileProps {
 }
 
 export default function ProductMobile({ product }: ProductMobileProps) {
+
+    const { addToCart } = useCart();
+    const handleAddToCart = () => {
+        addToCart(product);
+        // Opcional: Podrías añadir una pequeña alerta o feedback visual aquí
+        console.log(`${product.name} añadido a la bolsa axis`);
+    };
+
     const precio = (product.price).toLocaleString();
 
     const [selectedColor, setSelectedColor] = useState("aluminum");
@@ -121,7 +129,7 @@ export default function ProductMobile({ product }: ProductMobileProps) {
                     <p className="text-[4vw] font-light text-black">listo para enviar</p>
                 </div>
                 {/* Botón */}
-                <button className="bg-[#f3b52a] text-black w-[20vw] h-[23vw] rounded-xl flex flex-col items-center justify-center leading-none transition-colors">
+                <button onClick={handleAddToCart} className="bg-[#f3b52a] text-black w-[20vw] h-[23vw] rounded-xl flex flex-col items-center justify-center leading-none transition-colors">
                     <span className="text-[3vw] font-light leading-tight">agregar</span>
                     <span className="text-[3vw] font-light leading-tight">al</span>
                     <span className="text-[3vw] font-light leading-tight">carrito</span>
