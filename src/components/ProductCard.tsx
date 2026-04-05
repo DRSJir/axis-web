@@ -2,6 +2,7 @@
 
 import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
+import { useRouter } from "next/navigation";
 
 interface Props {
     product: Product;
@@ -14,9 +15,20 @@ export default function ProductCard({ product, isFeatured = false, index }: Prop
     const colStart = isFeatured
         ? (index % 4 === 0 ? 'lg:col-start-1' : 'lg:col-start-3')
         : '';
+    const router = useRouter();
+
+    const handleCardClick = () => {
+        router.push(`/product/${product.id}`);
+    };
+
+    const handleAddToCart = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        addToCart(product);
+    };
+
 
     return (
-        <article className={`
+        <article onClick={handleCardClick} className={`
             /* En escritorio (lg): si es featured ocupa 2 columnas, si no 1 */
             ${isFeatured ? 'lg:col-span-2' : 'lg:col-span-1'}
             ${colStart}
@@ -27,8 +39,8 @@ export default function ProductCard({ product, isFeatured = false, index }: Prop
                 relative bg-[#f6f6f6] w-full flex items-center justify-center  
                 overflow-hidden transition-all duration-700 ease-in-out
                 flex-1
-                ${isFeatured ? 'aspect-[16/9]' : 'aspect-square'}
-                rounded-[6vw] min-[415px]:rounded-none
+                ${isFeatured ? 'aspect-video' : 'aspect-square'}
+                rounded-[3vw] min-[415px]:rounded-none
                 flex-shrink-0
             `}>
 
@@ -62,12 +74,8 @@ export default function ProductCard({ product, isFeatured = false, index }: Prop
 
                 {/* Botón de Añadir con escalado proporcional */}
                 <button
-                    onClick={(e) => {
-                        e.stopPropagation(); // Evita conflictos si el article tiene un link
-                        addToCart(product);
-                    }}
-                    className="flex items-center justify-center text-[8vw] min-[415px]:text-[3.5vw] font-extralight leading-none hover:opacity-40 transition-all active:scale-90 aspect-square"
-                    aria-label="Add to cart">
+                    onClick={handleAddToCart}
+                    className="flex items-center justify-center text-[8vw] min-[415px]:text-[3.5vw] font-extralight leading-none hover:opacity-40 transition-all active:scale-90 aspect-square">
                     <span className="translate-y-[-5%]">+</span>
                 </button>
             </div>
