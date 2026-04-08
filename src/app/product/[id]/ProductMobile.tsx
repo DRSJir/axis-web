@@ -17,11 +17,18 @@ interface ProductMobileProps {
 }
 
 export default function ProductMobile({ product }: ProductMobileProps) {
+    const { addToCart, isSyncing } = useCart();
+    const [localError, setLocalError] = useState(false);
 
-    const { addToCart } = useCart();
-    const handleAddToCart = () => {
-        addToCart(product);
-        // Opcional: Podrías añadir una pequeña alerta o feedback visual aquí
+    const handleAddToCart = async () => {
+        setLocalError(false);
+        try {
+            await addToCart(product);
+        } catch (error) {
+            setLocalError(true);
+            setTimeout(() => setLocalError(false), 3000);
+        }
+
         console.log(`${product.name} añadido a la bolsa axis`);
     };
 
@@ -129,10 +136,21 @@ export default function ProductMobile({ product }: ProductMobileProps) {
                     <p className="text-[4vw] font-light text-black">listo para enviar</p>
                 </div>
                 {/* Botón */}
-                <button onClick={handleAddToCart} className="bg-[#f3b52a] text-black w-[20vw] h-[23vw] rounded-xl flex flex-col items-center justify-center leading-none transition-colors">
-                    <span className="text-[3vw] font-light leading-tight">agregar</span>
-                    <span className="text-[3vw] font-light leading-tight">al</span>
-                    <span className="text-[3vw] font-light leading-tight">carrito</span>
+                <button
+                    onClick={handleAddToCart}
+                    disabled={isSyncing}
+                    className="bg-[#f3b52a] text-black w-[20vw] h-[23vw] rounded-xl flex flex-col items-center justify-center leading-none transition-colors">
+                    {isSyncing ? (
+                        <span className="text-[2.5vw] animate-pulse">sincronizando...</span>
+                    ) : localError ? (
+                        <span className="text-[2.5vw] text-red-600">error red</span>
+                    ) : (
+                        <>
+                            <span className="text-[3vw] font-light leading-tight">agregar</span>
+                            <span className="text-[3vw] font-light leading-tight">al</span>
+                            <span className="text-[3vw] font-light leading-tight">carrito</span>
+                        </>
+                    )}
                 </button>
             </section>
 

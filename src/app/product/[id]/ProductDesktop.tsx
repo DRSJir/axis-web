@@ -17,16 +17,24 @@ interface ProductDesktopProps {
 }
 
 export default function ProductDesktop({ product }: ProductDesktopProps) {
-    const { addToCart } = useCart();
-    const handleAddToCart = () => {
-        addToCart(product);
-        console.log(`${product.name} añadido a la bolsa axis`);
+    const { addToCart, isSyncing } = useCart();
+    const [localError, setLocalError] = useState(false);
+
+    const handleAddToCart = async () => {
+        setLocalError(false);
+        try {
+            await addToCart(product);
+            console.log(`${product.name} añadido a la bolsa axis`);
+        } catch (error) {
+            setLocalError(true);
+            setTimeout(() => setLocalError(false), 3000);
+        }
     };
 
     const precio = (product.price).toLocaleString();
 
     const [selectedColor, setSelectedColor] = useState("aluminum");
-    const [openAccordion, setOpenAccordion] = useState<string | null>("details"); // 👈 "details" abierto por defecto
+    const [openAccordion, setOpenAccordion] = useState<string | null>("details");
 
     const price = product.price;
 
@@ -61,6 +69,7 @@ export default function ProductDesktop({ product }: ProductDesktopProps) {
                             clickable: true,
                             el: '.custom-pagination'
                         }}
+                        navigation
                         className="w-full aspect-square"
                     >
                         {productImages.map((img, index) => (
@@ -122,8 +131,19 @@ export default function ProductDesktop({ product }: ProductDesktopProps) {
                     </div>
                 </div>
 
-                <button className="text-[2vw] w-full bg-black text-white text-lg py-4 mb-8">
-                    añadir al carrito
+                {/* Botón Agregar al Carrito */}
+                <button
+                    onClick={handleAddToCart}
+                    disabled={isSyncing}
+                    className="text-[2vw] w-full bg-black text-white text-lg py-4 mb-8 transition-opacity hover:opacity-80 disabled:opacity-50"
+                >
+                    {isSyncing ? (
+                        <span className="text-[1.5vw] animate-pulse">sincronizando...</span>
+                    ) : localError ? (
+                        <span className="text-[1.5vw] text-red-400">error de red</span>
+                    ) : (
+                        <span className="text-[1.5vw] font-light">agregar al carrito</span>
+                    )}
                 </button>
 
                 {/* Specs técnicas acordeones */}
@@ -134,7 +154,7 @@ export default function ProductDesktop({ product }: ProductDesktopProps) {
                                 className="flex justify-between items-center cursor-pointer"
                                 onClick={() => toggleAccordion(accordion.id)}
                             >
-                                <h3 className="text-[1vw] font-light text-black font-normal">
+                                <h3 className="text-[1vw] font-light text-black">
                                     {accordion.title}
                                 </h3>
                                 <svg
@@ -150,7 +170,7 @@ export default function ProductDesktop({ product }: ProductDesktopProps) {
                             </div>
 
                             {openAccordion === accordion.id && accordion.id === "details" && (
-                                <ul className="text-[1vw] text-gray-400 font-light list-disc pl-5 leading-snug space-y-1 mt-2">
+                                <ul className="text-[1vw] text-gray-500 font-light list-disc pl-5 leading-snug space-y-1 mt-2">
                                     <li>sku: {product.sku}</li>
                                     <li>material: {product.material || "n/a"}</li>
                                     <li>categoría: {product.category}</li>
@@ -171,7 +191,7 @@ export default function ProductDesktop({ product }: ProductDesktopProps) {
 
                             {openAccordion === accordion.id && accordion.id === "guide" && (
                                 <div className="text-[1vw] text-gray-500 font-light mt-2">
-                                    Guide content here...
+                                    Guía de {product.name} próximamente...
                                 </div>
                             )}
                         </div>
