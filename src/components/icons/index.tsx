@@ -72,37 +72,41 @@ export function MenuIcon({ className = "w-6 h-6" }: { className?: string }) {
 
 export const ShoppingBagIconHeader = ({ count = 0, className = "w-6 h-6" }) => {
     return (
-        <div className="relative inline-flex items-center justify-center">
-            <svg
-                className={className}
-                viewBox="0 0 2000 2000"
-                version="1.1"
-                xmlns="http://www.w3.org/2000/svg"
-                style={{ fillRule: "evenodd", clipRule: "evenodd", strokeLinejoin: "round", strokeMiterlimit: 2 }}
-            >
-                <g transform="matrix(0.966709,0,0,0.966709,33.290653,33.290653)">
-                    <g transform="matrix(1,0,0,1,16.5,60)">
-                        <rect x="408" y="331" width="1151" height="1390" style={{ fillOpacity: 0 }}/>
-                        <path d="M1559,331L1559,1721L408,1721L408,331L1559,331ZM1498.658,391.342L468.342,391.342L468.342,1660.658L1498.658,1660.658L1498.658,391.342Z" style={{ fill: "currentColor" }}/>
-                    </g>
-                    <g transform="matrix(0.972028,0,0,2.346939,18.265734,-93.142857)">
-                        <clipPath id="shoppingBagClip">
-                            <rect x="653" y="133" width="715" height="147.639"/>
-                        </clipPath>
-                        <g clipPath="url(#shoppingBagClip)">
-                            <path d="M1368,183.131L1368,425.869C1368,453.537 1313.764,476 1246.96,476L774.04,476C707.236,476 653,453.537 653,425.869L653,183.131C653,155.463 707.236,133 774.04,133L1246.96,133C1313.764,133 1368,155.463 1368,183.131Z" style={{ fillOpacity: 0 }}/>
-                            <path d="M1368,183.131L1368,425.869C1368,453.537 1313.764,476 1246.96,476L774.04,476C707.236,476 653,453.537 653,425.869L653,183.131C653,155.463 707.236,133 774.04,133L1246.96,133C1313.764,133 1368,155.463 1368,183.131ZM1305.921,183.131C1305.921,169.653 1279.502,158.711 1246.96,158.711L774.04,158.711C741.498,158.711 715.079,169.653 715.079,183.131L715.079,425.869C715.079,439.347 741.498,450.289 774.04,450.289L1246.96,450.289C1279.502,450.289 1305.921,439.347 1305.921,425.869L1305.921,183.131Z" style={{ fill: "currentColor" }}/>
-                        </g>
+        <svg
+            className={className}
+            viewBox="0 0 2000 2000"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ fillRule: "evenodd", clipRule: "evenodd", strokeLinejoin: "round", strokeMiterlimit: 2 }}
+        >
+            <g transform="matrix(0.966709,0,0,0.966709,33.290653,33.290653)">
+                <g transform="matrix(1,0,0,1,16.5,60)">
+                    <rect x="408" y="331" width="1151" height="1390" style={{ fillOpacity: 0 }}/>
+                    <path d="M1559,331L1559,1721L408,1721L408,331L1559,331ZM1498.658,391.342L468.342,391.342L468.342,1660.658L1498.658,1660.658L1498.658,391.342Z" style={{ fill: "currentColor" }}/>
+                </g>
+                <g transform="matrix(0.972028,0,0,2.346939,18.265734,-93.142857)">
+                    <clipPath id="shoppingBagClip">
+                        <rect x="653" y="133" width="715" height="147.639"/>
+                    </clipPath>
+                    <g clipPath="url(#shoppingBagClip)">
+                        <path d="M1368,183.131L1368,425.869C1368,453.537 1313.764,476 1246.96,476L774.04,476C707.236,476 653,453.537 653,425.869L653,183.131C653,155.463 707.236,133 774.04,133L1246.96,133C1313.764,133 1368,155.463 1368,183.131Z" style={{ fillOpacity: 0 }}/>
+                        <path d="M1368,183.131L1368,425.869C1368,453.537 1313.764,476 1246.96,476L774.04,476C707.236,476 653,453.537 653,425.869L653,183.131C653,155.463 707.236,133 774.04,133L1246.96,133C1313.764,133 1368,155.463 1368,183.131ZM1305.921,183.131C1305.921,169.653 1279.502,158.711 1246.96,158.711L774.04,158.711C741.498,158.711 715.079,169.653 715.079,183.131L715.079,425.869C715.079,439.347 741.498,450.289 774.04,450.289L1246.96,450.289C1279.502,450.289 1305.921,439.347 1305.921,425.869L1305.921,183.131Z" style={{ fill: "currentColor" }}/>
                     </g>
                 </g>
-            </svg>
-
-            {count > 0 && (
-                <span className="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-mono">
-                    {count > 99 ? '99+' : count}
-                </span>
-            )}
-        </div>
+            </g>
+            {/* Texto del contador dentro del ícono */}
+            <text
+                x="1000"
+                y="1150"
+                textAnchor="middle"
+                fill="currentColor"
+                fontSize="400"
+                fontFamily="monospace"
+                fontWeight="font-light"
+            >
+                {count > 99 ? '99+' : count}
+            </text>
+        </svg>
     );
 };
 

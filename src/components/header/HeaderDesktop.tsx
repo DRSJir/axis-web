@@ -30,7 +30,10 @@ export default function HeaderDesktop({ totalItems }: HeaderDesktopProps) {
 
                     {/* tienda */}
                     <div className="flex gap-[0.5vw]">
-                        <ShoppingBagIconHeader className="h-[10vw] text-white" />
+                        <ShoppingBagIconHeader
+                            count={totalItems}
+                            className="h-[10vw] text-white"
+                        />
                         <div className="flex flex-col">
                             <h2 className="text-[2vw] font-light leading-none">tienda</h2>
                             <nav className="flex flex-col text-[1vw] font-light text-gray-400 mt-[0.8vw]">
