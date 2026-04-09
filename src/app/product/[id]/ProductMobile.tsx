@@ -25,14 +25,13 @@ export default function ProductMobile({ product }: ProductMobileProps) {
         try {
             await addToCart(product);
         } catch (error) {
+            console.log(error);
             setLocalError(true);
             setTimeout(() => setLocalError(false), 3000);
         }
 
         console.log(`${product.name} añadido a la bolsa axis`);
     };
-
-    const precio = (product.price).toLocaleString();
 
     const [selectedColor, setSelectedColor] = useState("aluminum");
     const [openAccordion, setOpenAccordion] = useState<string | null>("details");
@@ -91,7 +90,7 @@ export default function ProductMobile({ product }: ProductMobileProps) {
                                     </div>
                                 ) : (
                                     <div className="flex flex-col items-center justify-center w-full h-full">
-                                        <ImageNotAvailable className="w-[30vw] sm:w-[25vw] md:w-[20vw] h-auto" />
+                                        <ImageNotAvailable />
                                         <span className="text-[3vw] text-gray-400 mt-[2vw]">Imagen no disponible</span>
                                     </div>
                                 )}

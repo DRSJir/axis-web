@@ -61,7 +61,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     // cargar carrito desde la API
     useEffect(() => {
-        const loadCart = async () => {
+        (async () => {
             try {
                 const data = await fetchAxis("/cart") as ApiCartResponse;
                 // Mapeamos los items de la API al formato que usa tu App
@@ -71,8 +71,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             } catch (error) {
                 console.error("[AXIS_ERROR]: No se pudo cargar el carrito inicial", error);
             }
-        };
-        loadCart();
+        })();
     }, []);
 
     const addToCart = async (product: Product) => {

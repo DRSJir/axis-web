@@ -178,7 +178,7 @@ export const NowIcon = ({ className = "w-6 h-6" }) => {
     );
 };
 
-export const ImageNotAvailable = ({ className = "w-6 h-6" }) => {
+export const ImageNotAvailable = () => {
     return (
         <svg
             className="w-32 h-32 text-gray-400"

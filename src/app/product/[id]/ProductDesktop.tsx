@@ -26,17 +26,14 @@ export default function ProductDesktop({ product }: ProductDesktopProps) {
             await addToCart(product);
             console.log(`${product.name} añadido a la bolsa axis`);
         } catch (error) {
+            console.log(error);
             setLocalError(true);
             setTimeout(() => setLocalError(false), 3000);
         }
     };
 
-    const precio = (product.price).toLocaleString();
-
     const [selectedColor, setSelectedColor] = useState("aluminum");
     const [openAccordion, setOpenAccordion] = useState<string | null>("details");
-
-    const price = product.price;
 
     // Placeholder mientras no hay imágenes
     const productImages = product.images?.length ? product.images : [null];
