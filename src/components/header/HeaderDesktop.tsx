@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 
 export default function HeaderDesktop() {
-    const { totalItems } = useCart(); // 👈 Obtener el total de items del carrito
+    const { totalItems } = useCart();
 
     return (
         <header className="bg-black text-white py-8 px-[6vw] flex flex-wrap items-start justify-between gap-y-8">

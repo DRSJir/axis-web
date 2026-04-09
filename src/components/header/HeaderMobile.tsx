@@ -43,7 +43,6 @@ export default function HeaderMobile() {
             <MobileMenu
                 isOpen={isMenuOpen}
                 onClose={() => setIsMenuOpen(false)}
-                totalItems={totalItems}
             />
         </>
     );
