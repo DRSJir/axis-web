@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useCart } from "@/context/CartContext";
 import { Product } from "@/types";
 
 // Importaciones de Swiper
@@ -16,52 +17,68 @@ interface ProductDesktopProps {
 }
 
 export default function ProductDesktop({ product }: ProductDesktopProps) {
-    const [selectedColor, setSelectedColor] = useState("aluminum");
+    const { addToCart, isSyncing } = useCart();
+    const [localError, setLocalError] = useState(false);
 
-    // Si no hay imágenes, usamos un array con un placeholder
-    const images = product.images?.length ? product.images : [null];
+    const handleAddToCart = async () => {
+        setLocalError(false);
+        try {
+            await addToCart(product);
+            console.log(`${product.name} añadido a la bolsa axis`);
+        } catch (error) {
+            console.log(error);
+            setLocalError(true);
+            setTimeout(() => setLocalError(false), 3000);
+        }
+    };
+
+    const [selectedColor, setSelectedColor] = useState("aluminum");
+    const [openAccordion, setOpenAccordion] = useState<string | null>("details");
+
+    // Placeholder mientras no hay imágenes
+    const productImages = product.images?.length ? product.images : [null];
 
     const colors = [
-        { name: "aluminum", value: "aluminum", class: "bg-[#E0E0E0]" },
+        { name: "aluminum", value: "aluminum", class: "bg-gray-400" },
         { name: "black", value: "black", class: "bg-black" }
     ];
 
+    const accordions = [
+        { id: "details", title: "detalles técnicos" },
+        { id: "compatibility", title: "compatibilidad" },
+        { id: "guide", title: `guía ${product.name}` }
+    ];
+
+    const toggleAccordion = (id: string) => {
+        setOpenAccordion(openAccordion === id ? null : id);
+    };
+
     return (
-        <main className="max-w-6xl mx-auto px-4 py-16 lg:py-24 grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24">
+        <main className="py-[5vw] grid grid-cols-2 gap-[2vw]">
 
             {/* --- SECCIÓN GALERÍA CON SWIPER --- */}
             <section className="flex flex-col items-center relative group" data-purpose="product-gallery">
-                <div className="relative w-full max-w-md flex items-center justify-center">
-
-                    {/* Flecha Izquierda (Controla Swiper mediante clases) */}
-                    <button className="swiper-button-prev-custom absolute left-0 lg:-left-12 p-2 text-gray-400 hover:text-black z-10 transition-colors">
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path d="M15 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" />
-                        </svg>
-                    </button>
+                <div className="relative w-full">
 
                     <Swiper
                         modules={[Navigation, Pagination]}
-                        navigation={{
-                            prevEl: ".swiper-button-prev-custom",
-                            nextEl: ".swiper-button-next-custom",
-                        }}
                         pagination={{
                             clickable: true,
                             el: '.custom-pagination'
                         }}
-                        className="w-full h-[400px]"
+                        navigation
+                        className="w-full aspect-square"
                     >
-                        {images.map((img, index) => (
+                        {productImages.map((img, index) => (
                             <SwiperSlide key={index} className="flex items-center justify-center">
                                 {img ? (
-                                    <div className="relative w-full h-full max-w-[320px]">
+                                    <div className="relative w-full h-full">
                                         <Image
-                                            alt={`${product.name} - vista ${index}`}
+                                            alt={`${product.sku} - vista ${index}`}
                                             src={img}
                                             fill
                                             className="object-contain"
-                                            sizes="320px"
+                                            sizes="100vw"
                                             priority={index === 0}
                                         />
                                     </div>
@@ -75,13 +92,6 @@ export default function ProductDesktop({ product }: ProductDesktopProps) {
                             </SwiperSlide>
                         ))}
                     </Swiper>
-
-                    {/* Flecha Derecha (Controla Swiper mediante clases) */}
-                    <button className="swiper-button-next-custom absolute right-0 lg:-right-12 p-2 text-gray-400 hover:text-black z-10 transition-colors">
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" />
-                        </svg>
-                    </button>
                 </div>
 
                 {/* Contenedor de Paginación Personalizado (Estilo Axis) */}
@@ -89,18 +99,18 @@ export default function ProductDesktop({ product }: ProductDesktopProps) {
             </section>
 
             {/* --- SECCIÓN DETALLES --- */}
-            <section className="flex flex-col lowercase">
-                <h2 className="text-[32px] leading-tight font-light mb-1 tracking-tight">
+            <section className="flex flex-col">
+                <h2 className="text-[3vw] leading-tight font-light mb-[0.5vw] tracking-tight">
                     {product.name}
                 </h2>
-                <p className="text-[32px] leading-tight font-light mb-4 tracking-tight">
+                <p className="text-[3vw] leading-tight font-light mb-[2vw] tracking-tight">
                     {product.price} USD
                 </p>
-                <p className="text-sm mb-6 text-gray-500">listo para enviar</p>
+                <p className="text-[1vw] mb-[1vw] text-gray-500">listo para enviar</p>
 
                 {/* Selección de Color */}
-                <div className="mb-6">
-                    <p className="text-sm mb-2 opacity-50">{selectedColor}</p>
+                <div className="mb-[2vw]">
+                    <p className="text-[1vw] mb-[1vw] opacity-50">{selectedColor}</p>
                     <div className="flex gap-2">
                         {colors.map((color) => (
                             <button
@@ -118,19 +128,72 @@ export default function ProductDesktop({ product }: ProductDesktopProps) {
                     </div>
                 </div>
 
-                <button className="w-full bg-black text-white text-lg py-4 mb-8 hover:bg-neutral-800 transition-colors">
-                    añadir al carrito
+                {/* Botón Agregar al Carrito */}
+                <button
+                    onClick={handleAddToCart}
+                    disabled={isSyncing}
+                    className="text-[2vw] w-full bg-black text-white text-lg py-4 mb-8 transition-opacity hover:opacity-80 disabled:opacity-50"
+                >
+                    {isSyncing ? (
+                        <span className="text-[1.5vw] animate-pulse">sincronizando...</span>
+                    ) : localError ? (
+                        <span className="text-[1.5vw] text-red-400">error de red</span>
+                    ) : (
+                        <span className="text-[1.5vw] font-light">agregar al carrito</span>
+                    )}
                 </button>
 
-                {/* Specs técnicas */}
-                <div className="text-sm leading-snug space-y-6 max-w-md text-gray-600">
-                    <p>{product.description}</p>
-                    <ul className="list-disc pl-4 space-y-1">
-                        <li>sku: {product.sku}</li>
-                        <li>categoría: {product.category}</li>
-                        {product.compatibility?.map(c => <li key={c}>{c}</li>)}
-                    </ul>
-                </div>
+                {/* Specs técnicas acordeones */}
+                <section className="border-t border-gray-200 mt-8" data-purpose="accordions">
+                    {accordions.map((accordion) => (
+                        <div key={accordion.id} className="py-[1vw] border-b border-gray-200">
+                            <div
+                                className="flex justify-between items-center cursor-pointer"
+                                onClick={() => toggleAccordion(accordion.id)}
+                            >
+                                <h3 className="text-[1vw] font-light text-black">
+                                    {accordion.title}
+                                </h3>
+                                <svg
+                                    className={`w-5 h-5 text-black transition-transform duration-200 ${
+                                        openAccordion === accordion.id ? "rotate-180" : "-rotate-90"
+                                    }`}
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+                                </svg>
+                            </div>
+
+                            {openAccordion === accordion.id && accordion.id === "details" && (
+                                <ul className="text-[1vw] text-gray-500 font-light list-disc pl-5 leading-snug space-y-1 mt-2">
+                                    <li>sku: {product.sku}</li>
+                                    <li>material: {product.material || "n/a"}</li>
+                                    <li>categoría: {product.category}</li>
+                                </ul>
+                            )}
+
+                            {openAccordion === accordion.id && accordion.id === "compatibility" && (
+                                <ul className="text-[1vw] text-gray-500 font-light list-disc pl-5 leading-snug space-y-1 mt-2">
+                                    {product.compatibility && product.compatibility.length > 0 ? (
+                                        product.compatibility.map((item, index) => (
+                                            <li key={index}>{item}</li>
+                                        ))
+                                    ) : (
+                                        <li>compatibilidad universal</li>
+                                    )}
+                                </ul>
+                            )}
+
+                            {openAccordion === accordion.id && accordion.id === "guide" && (
+                                <div className="text-[1vw] text-gray-500 font-light mt-2">
+                                    Guía de {product.name} próximamente...
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </section>
             </section>
         </main>
     );

@@ -8,7 +8,7 @@ export interface Product {
     description: string | null;
     material?: string | null;
     stock: number;
-    sku: number;
+    sku: string;
     compatibility: string[];
     featured?: boolean;
 }

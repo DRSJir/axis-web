@@ -3,6 +3,7 @@
 import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
+import React from "react";
 
 interface Props {
     product: Product;
@@ -21,11 +22,17 @@ export default function ProductCard({ product, isFeatured = false, index }: Prop
         router.push(`/product/${product.id}`);
     };
 
-    const handleAddToCart = (e: React.MouseEvent) => {
+    const handleAddToCart = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        addToCart(product);
+        try {
+            await addToCart(product);
+            // mostrar feedback de éxito
+            console.log("Producto agregado correctamente");
+        } catch (error) {
+            // manejar el error
+            console.error("Error al agregar al carrito:", error);
+        }
     };
-
 
     return (
         <article onClick={handleCardClick} className={`
