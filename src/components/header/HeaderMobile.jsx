@@ -3,8 +3,10 @@
 import { useState, useEffect } from "react";
 import { ShoppingBagIcon, MenuIcon } from "@/components/icons";
 import MobileMenu from "./MobileMenu";
+import { useCart } from "@/context/CartContext";
 
-export default function HeaderMobile({ totalItems }) {
+export default function HeaderMobile() {
+    const { totalItems } = useCart();
     const [isVisible, setIsVisible] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
