@@ -1,16 +1,35 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_URL;
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
-export async function fetchAxis(endpoint: string, options: RequestInit = {}) {
-    const cleanEndpoint = endpoint.replace(/^\/?api/, "");
-    const safeEndpoint = cleanEndpoint.startsWith('/') ? cleanEndpoint : `/${cleanEndpoint}`;
+// obtener o generar el ID sesión
+export const getSessionId = (): string => {
+    if (typeof window === "undefined") return "";
 
-    const url = `${API_BASE}${safeEndpoint}`;
+    let sessionId = localStorage.getItem("axis_session_id");
+    if (!sessionId) {
+        sessionId = crypto.randomUUID();
+        localStorage.setItem("axis_session_id", sessionId);
+    }
+    return sessionId;
+};
+
+// función para poder pedir datos al api
+export const fetchAxis = async (endpoint: string, options: RequestInit = {}) => {
+    const sessionId = getSessionId();
+
+    if (!API_BASE || !API_KEY) {
+        console.error("⚠️ Error: Variables de entorno no configuradas en .env.local");
+    }
 
     const defaultHeaders = {
-        'Content-Type': 'application/json',
-        'X-API-KEY': API_KEY || '',
+        "Content-Type": "application/json",
+        "X-API-KEY": API_KEY || "",
+        "X-Session-ID": sessionId,
     };
+
+    // url final
+    const separator = endpoint.includes('?') ? '&' : '?';
+    const url = `${API_BASE}${endpoint}${separator}X-Session-ID=${sessionId}`;
 
     const response = await fetch(url, {
         ...options,
@@ -21,8 +40,11 @@ export async function fetchAxis(endpoint: string, options: RequestInit = {}) {
     });
 
     if (!response.ok) {
-        throw new Error(`AXIS_API_ERROR: ${response.status} en ${url}`);
+        // Log para debuggear errores de API en desarrollo
+        const errorData = await response.json().catch(() => ({}));
+        console.error(`[AXIS_API_ERROR] ${response.status}:`, errorData);
+        throw new Error(errorData.message || "Error en la petición a Axis API");
     }
 
     return response.json();
-}
+};
