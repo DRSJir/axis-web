@@ -1,8 +1,18 @@
-"use client"; // Esto permite que el carrito sea interactivo en el navegador
+"use client";
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { Product } from '@/types';
-import { fetchAxis } from "@/lib/api";
+import { fetchAxis, getSessionId } from "@/lib/api";
+
+interface OrderResponse {
+    order_id: string;
+    receipt: {
+        total: number;
+        subtotal: number;
+        tax: number;
+        shipping: number;
+    };
+}
 
 interface CartItem extends Product {
     quantity: number;
@@ -13,9 +23,9 @@ interface CartContextType {
     addToCart: (product: Product) => Promise<void>;
     totalItems: number;
     isSyncing: boolean;
+    checkout: () => Promise<OrderResponse>; // Tipo específico en lugar de any
 }
 
-// Definir la estructura de la respuesta de la API
 interface ApiCartItem {
     product_id: number;
     quantity: number;
@@ -41,77 +51,93 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const [cart, setCart] = useState<CartItem[]>([]);
     const [isSyncing, setIsSyncing] = useState(false);
 
-    // Función para mapear items de la API al formato CartItem
-    const mapApiItemToCartItem = (apiItem: ApiCartItem): CartItem => {
-        return {
-            id: apiItem.product_id,
-            quantity: apiItem.quantity,
-            images: apiItem.images,
-            name: apiItem.name,
-            category: apiItem.category,
-            price: apiItem.price,
-            description: apiItem.description,
-            material: apiItem.material,
-            stock: apiItem.stock,
-            sku: apiItem.sku,
-            compatibility: apiItem.compatibility,
-            featured: apiItem.featured,
-        };
-    };
-
-    // cargar carrito desde la API
     useEffect(() => {
-        (async () => {
+        // 1. Verificamos que window exista (estamos en el cliente)
+        if (typeof window === "undefined") return;
+
+        const sessionId = getSessionId();
+
+        if (!sessionId || sessionId.trim() === "") {
+            console.log("[AXIS] Esperando a que el Session ID se genere...");
+            return;
+        }
+
+        const loadCart = async () => {
+            // obtenemos el ID real del localStorage
+            const sessionId = getSessionId();
+
+            // si por alguna razón sigue vacío, no disparamos el fetch
+            if (!sessionId || sessionId === "") return;
+
             try {
-                const data = await fetchAxis("/cart") as ApiCartResponse;
-                // Mapeamos los items de la API al formato que usa tu App
+                const data: ApiCartResponse = await fetchAxis("/cart");
                 if (data && data.items) {
-                    setCart(data.items.map(mapApiItemToCartItem));
+                    setCart(data.items.map((item: ApiCartItem) => ({
+                        ...item,
+                        id: item.product_id,
+                    } as CartItem)));
                 }
             } catch (error) {
-                console.error("[AXIS_ERROR]: No se pudo cargar el carrito inicial", error);
+                console.error("Error al cargar carrito:", error);
+                setCart([]);
             }
-        })();
+        };
+
+        loadCart();
     }, []);
 
     const addToCart = async (product: Product) => {
         setIsSyncing(true);
-
         try {
-            // conexión con API
-            const response = await fetchAxis("/cart", {
+            const response: ApiCartResponse = await fetchAxis("/cart", {
                 method: "POST",
                 body: JSON.stringify({
                     product_id: product.id,
                     quantity: 1
                 }),
-            }) as ApiCartResponse;
+            });
 
-            // sincronizar UI con la respuesta del servidor
-            if (response && response.items) {
-                setCart(response.items.map(mapApiItemToCartItem));
-            } else {
-                // Si el POST no devuelve el carrito, forzamos un fetch para estar seguros
-                const freshCart = await fetchAxis("/cart") as ApiCartResponse;
-                if (freshCart && freshCart.items) {
-                    setCart(freshCart.items.map(mapApiItemToCartItem));
-                }
-            }
-
-            console.log(`[AXIS_LOG]: ${product.name} sincronizado.`);
+            setCart(response.items.map((item: ApiCartItem) => ({
+                ...item,
+                id: item.product_id,
+            } as CartItem)));
         } catch (error) {
-            console.error("[AXIS_ERROR]: Error al sincronizar:", error);
+            console.error("Error al añadir al carrito");
             throw error;
         } finally {
             setIsSyncing(false);
         }
     };
 
-    // calcular el total de elementos en el carrito
+    // FUNCIÓN DE CHECKOUT (Ahora correctamente dentro del Provider)
+    const checkout = async (): Promise<OrderResponse> => {
+        // si el carrito local está vacío
+        if (cart.length === 0) {
+            const errorMsg = "el carrito está vacío";
+            console.warn("[AXIS_LOG]: Intentó checkout sin items.");
+            throw new Error(errorMsg);
+        }
+
+        setIsSyncing(true);
+        try {
+            const orderData: OrderResponse = await fetchAxis("/cart/checkout", {
+                method: "POST"
+            });
+
+            setCart([]);
+            return orderData;
+        } catch (error) {
+            console.error("[AXIS_ERROR]: Error en checkout", error);
+            throw error;
+        } finally {
+            setIsSyncing(false);
+        }
+    };
+
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
     return (
-        <CartContext.Provider value={{ cart, addToCart, totalItems, isSyncing }}>
+        <CartContext.Provider value={{ cart, addToCart, totalItems, isSyncing, checkout }}>
             {children}
         </CartContext.Provider>
     );
