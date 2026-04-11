@@ -89,7 +89,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const addToCart = async (product: Product) => {
         setIsSyncing(true);
         try {
-            const response: ApiCartResponse = await fetchAxis("/cart", {
+            const response = await fetchAxis("/cart", {
                 method: "POST",
                 body: JSON.stringify({
                     product_id: product.id,
@@ -97,13 +97,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
                 }),
             });
 
-            setCart(response.items.map((item: ApiCartItem) => ({
-                ...item,
-                id: item.product_id,
-            } as CartItem)));
+            // verificamos si la respuesta trae los items directamente
+            if (response && response.items) {
+                setCart(response.items.map((item: ApiCartItem) => ({
+                    ...item,
+                    id: item.product_id,
+                } as CartItem)));
+            } else {
+                // SI LA API NO DEVUELVE ITEMS (Solo da un mensaje de éxito)
+                // Hacemos un fetch extra para refrescar el carrito real
+                const updatedCart: ApiCartResponse = await fetchAxis("/cart");
+                setCart(updatedCart.items.map((item: ApiCartItem) => ({
+                    ...item,
+                    id: item.product_id,
+                } as CartItem)));
+            }
         } catch (error) {
-            console.error("Error al añadir al carrito");
-            throw error;
+            console.error("Error al añadir al carrito:", error);
         } finally {
             setIsSyncing(false);
         }
