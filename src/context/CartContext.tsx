@@ -4,14 +4,16 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 import { Product } from '@/types';
 import { fetchAxis, getSessionId } from "@/lib/api";
 
+interface CartTotals {
+    subtotal: number;
+    tax: number;
+    shipping: number;
+    total: number;
+}
+
 interface OrderResponse {
     order_id: string;
-    receipt: {
-        total: number;
-        subtotal: number;
-        tax: number;
-        shipping: number;
-    };
+    receipt: CartTotals;
 }
 
 interface CartItem extends Product {
@@ -20,97 +22,79 @@ interface CartItem extends Product {
 
 interface CartContextType {
     cart: CartItem[];
+    totals: CartTotals;
     addToCart: (product: Product) => Promise<void>;
     totalItems: number;
     isSyncing: boolean;
-    checkout: () => Promise<OrderResponse>; // Tipo específico en lugar de any
+    checkout: () => Promise<OrderResponse>;
 }
 
-interface ApiCartItem {
+interface ApiCartItem extends Omit<CartItem, 'id'> {
     product_id: number;
-    quantity: number;
-    images: string[];
-    name: string;
-    category: string;
-    price: number;
-    description: string | null;
-    material?: string | null;
-    stock: number;
-    sku: string;
-    compatibility: string[];
-    featured?: boolean;
 }
 
 interface ApiCartResponse {
     items: ApiCartItem[];
+    calculation: CartTotals;
 }
+
+const initialTotals: CartTotals = {
+    subtotal: 0,
+    tax: 0,
+    shipping: 0,
+    total: 0
+};
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
     const [cart, setCart] = useState<CartItem[]>([]);
+    const [totals, setTotals] = useState<CartTotals>(initialTotals); // 3. Estado para totales
     const [isSyncing, setIsSyncing] = useState(false);
 
-    useEffect(() => {
-        // 1. Verificamos que window exista (estamos en el cliente)
-        if (typeof window === "undefined") return;
-
-        const sessionId = getSessionId();
-
-        if (!sessionId || sessionId.trim() === "") {
-            console.log("[AXIS] Esperando a que el Session ID se genere...");
-            return;
+    const handleApiResponse = (data: ApiCartResponse) => {
+        if (data.items) {
+            setCart(data.items.map((item) => ({
+                ...item,
+                id: item.product_id,
+            } as CartItem)));
         }
+        if (data.calculation) {
+            setTotals(data.calculation);
+        }
+    };
 
-        const loadCart = async () => {
-            // obtenemos el ID real del localStorage
-            const sessionId = getSessionId();
+    const loadCart = async () => {
+        const sessionId = getSessionId();
+        if (!sessionId) return;
+        try {
+            const data: ApiCartResponse = await fetchAxis("/cart");
+            handleApiResponse(data);
+        } catch (error) {
+            console.error("Error al cargar carrito:", error);
+            setCart([]);
+            setTotals(initialTotals);
+        }
+    };
 
-            // si por alguna razón sigue vacío, no disparamos el fetch
-            if (!sessionId || sessionId === "") return;
-
-            try {
-                const data: ApiCartResponse = await fetchAxis("/cart");
-                if (data && data.items) {
-                    setCart(data.items.map((item: ApiCartItem) => ({
-                        ...item,
-                        id: item.product_id,
-                    } as CartItem)));
-                }
-            } catch (error) {
-                console.error("Error al cargar carrito:", error);
-                setCart([]);
-            }
-        };
-
-        loadCart();
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            loadCart();
+        }
     }, []);
 
     const addToCart = async (product: Product) => {
         setIsSyncing(true);
         try {
-            const response = await fetchAxis("/cart", {
+            const response: ApiCartResponse = await fetchAxis("/cart", {
                 method: "POST",
-                body: JSON.stringify({
-                    product_id: product.id,
-                    quantity: 1
-                }),
+                body: JSON.stringify({ product_id: product.id, quantity: 1 }),
             });
 
-            // verificamos si la respuesta trae los items directamente
             if (response && response.items) {
-                setCart(response.items.map((item: ApiCartItem) => ({
-                    ...item,
-                    id: item.product_id,
-                } as CartItem)));
+                handleApiResponse(response);
             } else {
-                // SI LA API NO DEVUELVE ITEMS (Solo da un mensaje de éxito)
-                // Hacemos un fetch extra para refrescar el carrito real
-                const updatedCart: ApiCartResponse = await fetchAxis("/cart");
-                setCart(updatedCart.items.map((item: ApiCartItem) => ({
-                    ...item,
-                    id: item.product_id,
-                } as CartItem)));
+                await loadCart();
             }
         } catch (error) {
             console.error("Error al añadir al carrito:", error);
@@ -119,26 +103,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    // FUNCIÓN DE CHECKOUT (Ahora correctamente dentro del Provider)
     const checkout = async (): Promise<OrderResponse> => {
-        // si el carrito local está vacío
-        if (cart.length === 0) {
-            const errorMsg = "el carrito está vacío";
-            console.warn("[AXIS_LOG]: Intentó checkout sin items.");
-            throw new Error(errorMsg);
-        }
-
+        if (cart.length === 0) throw new Error("el carrito está vacío");
         setIsSyncing(true);
         try {
-            const orderData: OrderResponse = await fetchAxis("/cart/checkout", {
-                method: "POST"
-            });
-
+            const orderData: OrderResponse = await fetchAxis("/cart/checkout", { method: "POST" });
             setCart([]);
+            setTotals(initialTotals);
             return orderData;
-        } catch (error) {
-            console.error("[AXIS_ERROR]: Error en checkout", error);
-            throw error;
         } finally {
             setIsSyncing(false);
         }
@@ -147,7 +119,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
     return (
-        <CartContext.Provider value={{ cart, addToCart, totalItems, isSyncing, checkout }}>
+        // 4. Incluimos 'totals' en el value
+        <CartContext.Provider value={{ cart, totals, addToCart, totalItems, isSyncing, checkout }}>
             {children}
         </CartContext.Provider>
     );
